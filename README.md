@@ -52,6 +52,6 @@ git clone https://github.com/emulationman8810/bode_extended.git
 ---
 
 ## License & Credits
-This project is an extended version based on Gal Barkai's Asymptotic Bode diagrams (extended) (https://github.com/GalBarkai/asymptotic_bode/releases/tag/V1.2). Expanded and optimized to incorporate real curve generation, first-order corner corrections, and second-order resonance peak scaling.
+This project is an extended version based on Gal Barkai's Asymptotic Bode diagrams (extended) (https://github.com/GalBarkai/asymptotic_bode/). Expanded and optimized to incorporate real curve generation, first-order corner corrections, and second-order resonance peak scaling.
 
 
