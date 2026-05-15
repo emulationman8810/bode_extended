@@ -17,8 +17,8 @@ While standard asymptotic approximations often oversimplify system behavior near
 ### How It Works
 The script analyzes the numerator and denominator coefficients of a given transfer function to break it down into its fundamental dynamic components:
 1.  **Gain ($K$) and Integrators/Differentiators ($s^{\pm n}$):** Establishes the initial magnitude slope ($\pm 20n$ dB/decade) and initial phase shift.
-2.  **First-Order Real Roots ($s/\omega_c + 1$):** Introduces a $\pm 20$ dB/dec slope change at the corner frequency $\omega_c$, applying a $-3$ dB correction for poles ($+3$ dB for zeros) to trace the real response.
-3.  **Second-Order Quadratic Factors ($s^2/\omega_n^2 + 2\zeta s/\omega_n + 1$):** Introduces a $\pm 40$ dB/dec slope change at the natural frequency $\omega_n$. The script computes the precise peak deviation based on the damping factor $\zeta$, correcting the asymptotic peak directly on the graph.
+2.  **First-Order Real Roots ($\frac{s}{\omega_c} + 1$):** Introduces a $\pm 20$ dB/dec slope change at the corner frequency $\omega_c$, applying a $-3$ dB correction for poles ($+3$ dB for zeros) to trace the real response.
+3.  **Second-Order Quadratic Factors ($\frac{s^2}{\omega_n^2} + \frac{2\zeta s}{\omega_n} + 1$):** Introduces a $\pm 40$ dB/dec slope change at the natural frequency $\omega_n$. The script computes the precise peak deviation based on the damping factor $\zeta$, correcting the asymptotic peak directly on the graph.
 
 ---
 
@@ -38,7 +38,7 @@ den = [1 0.4 4];
 G = tf(num,den);
 
 % Run the extended Bode plotter
-bode_extended(G,both,both,'4.81'); % bode_extended(<tf>,<mag|phase|both>,<asymp|real|both>,<1dec|4.81>)
+bode_extended(G,'both','both','4.81'); % bode_extended(<tf>,<mag|phase|both>,<asymp|real|both>,<1dec|4.81>)
 ```
 
 
