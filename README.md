@@ -45,7 +45,7 @@ bode_extended(G,both,both,'4.81'); % bode_extended(<tf>,<mag|phase|both>,<asymp|
 ## Installation
 1. Clone this repository to your local machine
 ```bash
-git clone [https://github.com/emulationman8810/bode_extended.git](https://github.com/emulationman8810/bode_extended.git)
+git clone https://github.com/emulationman8810/bode_extended.git
 ```
 2. Open MATLAB and add the repository folder to your MATLAB path, or copy the `bode_extended.m` file directly into your working directory.
 
