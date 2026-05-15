@@ -32,9 +32,26 @@ For a second-order underdamped system with complex conjugate poles:
 $$G(s) = \frac{4}{s^2 + 0.4s + 4}$$
 
 ```matlab
-% Define your transfer function coefficients
+% Define your transfer function coefficients (using Control System Toolbox)
 num = [4]; 
-den = [1 0.4 4]; 
+den = [1 0.4 4];
+G = tf(num,den);
 
 % Run the extended Bode plotter
-bode_extended(num, den);
+bode_extended(G,both,both,'4.81'); % bode_extended(<tf>,<mag|phase|both>,<asymp|real|both>,<1dec|4.81>)
+```
+
+
+## Installation
+1. Clone this repository to your local machine
+```bash
+git clone [https://github.com/emulationman8810/bode_extended.git](https://github.com/emulationman8810/bode_extended.git)
+```
+2. Open MATLAB and add the repository folder to your MATLAB path, or copy the `bode_extended.m` file directly into your working directory.
+
+---
+
+## License & Credits
+This project is an extended version based on asymptotic Bode plotting concepts. Expanded and optimized by [Your Name/Username] to incorporate real curve generation, first-order corner corrections, and second-order resonance peak scaling.
+
+
