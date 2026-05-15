@@ -12,7 +12,7 @@ if nargin < 2 || isempty(type), type = 'both'; end
 if nargin < 3 || isempty(mode), mode = 'both'; end
 if nargin < 4 || isempty(rule), rule = '4.81'; end
 
-% --- 1. Analisi Strutturale ---
+% --- 1. System analisys ---
 K_gain = zpk(obj).k;
 z_all = zpk(obj).Z{:};
 p_all = zpk(obj).P{:};
@@ -26,17 +26,17 @@ p_rem = p_all(abs(p_all) > 1e-7);
 
 Kb = K_gain * prod(-z_rem) / prod(-p_rem);
 
-% --- 2. Tabella Contributi ---
+% --- 2. Element Matrix ---
 w_t = []; 
 w_t = analyze_roots(p_rem, -1, w_t);
 w_t = analyze_roots(z_rem,  1, w_t);
 
-% --- 3. Range Frequenze ---
+% --- 3. Frequency Range ---
 min_w = min([0.01, min(w_t(1,:))/10]);
 max_w = max([10000, max(w_t(1,:))*10]);
 interval = logspace(log10(min_w), log10(max_w), 5000);
 
-% --- 4. Calcolo Asintotico ---
+% --- 4. Asymptotic computation ---
 mag_matrix = zeros(size(w_t,2), length(interval));
 phi_matrix = zeros(size(w_t,2), length(interval));
 
@@ -56,8 +56,8 @@ end
 mag_asym = sum(mag_matrix,1) + 20*log10(abs(Kb)) - 20*g*log10(interval);
 phi_asym_deg = rad2deg(sum(phi_matrix,1) - g*(pi/2) + (sign(Kb)<0)*pi);
 
-% --- 5. Dati Reali e Allineamento ---
-[m_r_raw, p_r_raw, w_r] = bode(obj, interval); % Estratti correttamente m_r, p_r e w_r
+% --- 5. Real computation / Design ---
+[m_r_raw, p_r_raw, w_r] = bode(obj, interval);
 m_r = mag2db(squeeze(m_r_raw))'; 
 p_r = squeeze(p_r_raw)';
 phi_asym_deg = phi_asym_deg + round((p_r(1)-phi_asym_deg(1))/360)*360;
@@ -65,53 +65,53 @@ phi_asym_deg = phi_asym_deg + round((p_r(1)-phi_asym_deg(1))/360)*360;
 % --- 6. Plotting ---
 c_a = [1 0.4 0.4]; c_r = [0.4 1 1];
 
-% Sotto-grafico Modulo
+% Magnitude
 if ismember(type, {'both', 'mag'})
     if strcmpi(type, 'both'), s1 = subplot(2,1,1); else, s1 = gca; end
     hold on;
     if ismember(mode, {'asymp', 'both'})
-        p_ma = semilogx(interval, mag_asym, 'Color', c_a, 'LineWidth', 2, 'DisplayName', 'Asintotico');
-        % Personalizzazione Cursore
-        p_ma.DataTipTemplate.DataTipRows(1).Label = 'Pulsazione [rad/s]';
-        p_ma.DataTipTemplate.DataTipRows(2).Label = 'Ampiezza [dB]';
-        p_ma.DataTipTemplate.DataTipRows(end+1) = dataTipTextRow('Frequenza [Hz]', interval/(2*pi));
+        p_ma = semilogx(interval, mag_asym, 'Color', c_a, 'LineWidth', 2, 'DisplayName', 'Asymptotic');
+   
+        p_ma.DataTipTemplate.DataTipRows(1).Label = 'Frequency [rad/s]';
+        p_ma.DataTipTemplate.DataTipRows(2).Label = 'Magnitude [dB]';
+        p_ma.DataTipTemplate.DataTipRows(end+1) = dataTipTextRow('Frequency [Hz]', interval/(2*pi));
     end
     if ismember(mode, {'real', 'both'})
-        p_mr = semilogx(w_r, m_r, '-', 'Color', c_r, 'LineWidth', 1.5, 'DisplayName', 'Reale');
-        % Personalizzazione Cursore
-        p_mr.DataTipTemplate.DataTipRows(1).Label = 'Pulsazione [rad/s]';
-        p_mr.DataTipTemplate.DataTipRows(2).Label = 'Ampiezza [dB]';
-        p_mr.DataTipTemplate.DataTipRows(end+1) = dataTipTextRow('Frequenza [Hz]', w_r/(2*pi));
+        p_mr = semilogx(w_r, m_r, '-', 'Color', c_r, 'LineWidth', 1.5, 'DisplayName', 'Real');
+        
+        p_mr.DataTipTemplate.DataTipRows(1).Label = 'Frequency [rad/s]';
+        p_mr.DataTipTemplate.DataTipRows(2).Label = 'Magnitude [dB]';
+        p_mr.DataTipTemplate.DataTipRows(end+1) = dataTipTextRow('Frequency [Hz]', w_r/(2*pi));
     end
-    ylabel('Ampiezza [dB]'); xlabel('\omega [rad/s]');
-    title('Diagramma Modulo', 'Color', 'w');
+    ylabel('Magnitude [dB]'); xlabel('\omega [rad/s]');
+    title('Magnitude Plot', 'Color', 'w');
     format_plot_local();
 end
 
-% Sotto-grafico Fase
+% Phase
 if ismember(type, {'both', 'phase'})
     if strcmpi(type, 'both'), s2 = subplot(2,1,2); else, s2 = gca; end
     hold on;
     if ismember(mode, {'asymp', 'both'})
-        p_pa = semilogx(interval, phi_asym_deg, 'Color', c_a, 'LineWidth', 2, 'DisplayName', 'Asintotico');
-        % Personalizzazione Cursore
-        p_pa.DataTipTemplate.DataTipRows(1).Label = 'Pulsazione [rad/s]';
-        p_pa.DataTipTemplate.DataTipRows(2).Label = 'Fase [deg]';
-        p_pa.DataTipTemplate.DataTipRows(end+1) = dataTipTextRow('Frequenza [Hz]', interval/(2*pi));
+        p_pa = semilogx(interval, phi_asym_deg, 'Color', c_a, 'LineWidth', 2, 'DisplayName', 'Asymptotic');
+        
+        p_pa.DataTipTemplate.DataTipRows(1).Label = 'Frequency [rad/s]';
+        p_pa.DataTipTemplate.DataTipRows(2).Label = 'Phase [deg]';
+        p_pa.DataTipTemplate.DataTipRows(end+1) = dataTipTextRow('Frequency [Hz]', interval/(2*pi));
     end
     if ismember(mode, {'real', 'both'})
-        p_pr = semilogx(w_r, p_r, '-', 'Color', c_r, 'LineWidth', 1.5, 'DisplayName', 'Reale');
-        % Personalizzazione Cursore
-        p_pr.DataTipTemplate.DataTipRows(1).Label = 'Pulsazione [rad/s]';
-        p_pr.DataTipTemplate.DataTipRows(2).Label = 'Fase [deg]';
-        p_pr.DataTipTemplate.DataTipRows(end+1) = dataTipTextRow('Frequenza [Hz]', w_r/(2*pi));
+        p_pr = semilogx(w_r, p_r, '-', 'Color', c_r, 'LineWidth', 1.5, 'DisplayName', 'Real');
+        
+        p_pr.DataTipTemplate.DataTipRows(1).Label = 'Frequency [rad/s]';
+        p_pr.DataTipTemplate.DataTipRows(2).Label = 'Phase [deg]';
+        p_pr.DataTipTemplate.DataTipRows(end+1) = dataTipTextRow('Frequency [Hz]', w_r/(2*pi));
     end
-    ylabel('Fase [deg]'); xlabel('\omega [rad/s]'); 
-    title(['Fase (Regola: ' rule ')'], 'Color', 'w');
+    ylabel('Phase [deg]'); xlabel('\omega [rad/s]'); 
+    title(['Phase Plot (Rule: ' rule ')'], 'Color', 'w');
     format_plot_local();
 end
 
-    % Funzione interna per formattazione rapida
+    % Function for formatting plots
     function format_plot_local()
         grid on; set(gca, 'XScale', 'log', 'Color', [0.15 0.15 0.15], ...
             'XColor', 'w', 'YColor', 'w', 'GridAlpha', 0.3);
@@ -119,7 +119,7 @@ end
     end
 end
 
-% --- Funzioni Helper ---
+% --- Helper functions ---
 function w_out = analyze_roots(roots_vec, type_id, w_in)
     w_out = w_in; visited = false(size(roots_vec));
     for i = 1:length(roots_vec)
